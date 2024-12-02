@@ -22,7 +22,7 @@ def part2():
     reports = [list(map(lambda x: int(x), ln.strip().split())) for ln in open("input").readlines()]
     # brute force go brr
     reports = list(map(lambda rep: [rep[:i] + rep[i+1:] for i, _ in enumerate(rep)] + [rep], reports))
-    return sum(map(lambda reps: sum(is_safe(r) for r in reps) > 0, reports))
+    return sum(map(lambda reps: any(is_safe(r) for r in reps), reports))
 
 
 if __name__ == "__main__":
