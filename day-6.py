@@ -27,14 +27,14 @@ def do_rounds(world, new_obstacle=None):
         )
         y_in_bounds = 0 <= next_pos < L
         if not x_in_bounds or not y_in_bounds:
-            return visited, False
+            return set(v[0] for v in visited), False
 
         # Turn right if faced with an obstacle
         if world[next_pos] == "#":
             guard_dir = (guard_dir - pi / 2) % (2 * pi)
         # Check for loops
         elif (next_pos, guard_dir) in visited:
-            return visited, True
+            return set(v[0] for v in visited), True
         else:
             visited.add((next_pos, guard_dir))
             guard_pos = next_pos
@@ -42,13 +42,13 @@ def do_rounds(world, new_obstacle=None):
 
 def part1():
     visited, _ = do_rounds(get_puzzle(6))
-    return len(set(v[0] for v in visited))
+    return len(visited)
 
 
 def part2():
     w = get_puzzle(6)
     visited, _ = do_rounds(w)
-    return sum(do_rounds(w, pos)[1] for pos in set(v[0] for v in visited))
+    return sum(do_rounds(w, pos)[1] for pos in visited)
 
 
 if __name__ == "__main__":
