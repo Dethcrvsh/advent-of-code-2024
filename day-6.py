@@ -1,8 +1,6 @@
 from aoc import get_puzzle
 from math import pi, cos, sin
 
-test = "....#.....\n.........#\n..........\n..#.......\n.......#..\n..........\n.#..^.....\n........#.\n#.........\n......#..."
-
 
 def do_rounds(world, new_obstacle=None):
     W = len(world.split("\n")[0])
