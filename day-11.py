@@ -1,5 +1,6 @@
 from aoc import get_puzzle
 from functools import cache
+import time
 import math
 
 
@@ -16,11 +17,11 @@ def get_stones(stone, blinks):
     digits = int(math.log10(stone)) + 1
 
     if digits % 2 == 0:
-        s1 = int(str(stone)[: digits // 2])
-        s2 = int(str(stone)[digits // 2 :])
+        s1 = stone // (10 ** (digits / 2))
+        s2 = stone % (10 ** (digits / 2))
 
         return get_stones(s1, blinks) + get_stones(s2, blinks)
-    
+
     return get_stones(stone * 2024, blinks)
 
 
@@ -37,4 +38,6 @@ def part2():
 if __name__ == "__main__":
     print("⋆꙳•̩̩͙❅*̩̩͙‧͙   Advent of Code 2024  ‧͙*̩̩͙❆ ͙͛ ˚₊⋆\n")
     print(f"  ❆ Part 1: {part1()}")
+    s = time.time()
     print(f"  ❆ Part 2: {part2()}")
+    print(time.time() - s)
