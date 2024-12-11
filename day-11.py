@@ -24,14 +24,13 @@ def get_stones(stone, blinks):
     return get_stones(stone * 2024, blinks)
 
 
-
 def part1():
-    stones = list(map(int, get_puzzle(11).split(" ")))
+    stones = map(int, get_puzzle(11).split(" "))
     return sum(get_stones(s, 25) for s in stones)
 
 
 def part2():
-    stones = list(map(int, get_puzzle(11).split(" ")))
+    stones = map(int, get_puzzle(11).split(" "))
     return sum(get_stones(s, 75) for s in stones)
 
 
