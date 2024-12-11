@@ -38,6 +38,4 @@ def part2():
 if __name__ == "__main__":
     print("⋆꙳•̩̩͙❅*̩̩͙‧͙   Advent of Code 2024  ‧͙*̩̩͙❆ ͙͛ ˚₊⋆\n")
     print(f"  ❆ Part 1: {part1()}")
-    s = time.time()
     print(f"  ❆ Part 2: {part2()}")
-    print(time.time() - s)
