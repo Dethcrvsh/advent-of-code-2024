@@ -56,7 +56,7 @@ def display_grid(grid):
             for x in range(rows):
                 c = grid[x, y]
                 if c == 1:
-                    pygame.draw.rect(screen, (255, 255, 255), (x * 8, y * 8, 8, 8), 0)
+                    pygame.draw.rect(screen, (255, 255, 255), (y * 8, x * 8, 8, 8), 0)
 
         pygame.display.flip()
 
