@@ -1,10 +1,7 @@
+from typing import DefaultDict
 from aoc import get_puzzle
 from math import inf
 from heapq import heappush, heappop
-from collections import Counter
-
-
-test = "###############\n#...#...#.....#\n#.#.#.#.#.###.#\n#S#...#.#.#...#\n#######.#.#.###\n#######.#.#...#\n#######.#.###.#\n###..E#...#...#\n###.#######.###\n#...###...#...#\n#.#####.#.###.#\n#.#...#.#.#...#\n#.#.#.#.#.#.###\n#...#...#...###\n###############"
 
 
 GROUND = '.'
@@ -15,7 +12,6 @@ GOAL = 'E'
 
 def get_input():
     return [list(row) for row in get_puzzle(20).splitlines()]
-
 
 
 def get_pos(c, grid):
@@ -35,15 +31,12 @@ def neighbours(x, y, width, height):
         yield x, y + 1
 
 
-def get_cost(grid, cheat=(-1, -1)):
+def get_path(grid):
     width = len(grid[0])
     height = len(grid)
     q = []
     costs = [[inf for _ in range(width)] for _ in range(height)]
     prev = {}
-    # Active the cheat
-    old_tile = grid[cheat[1]][cheat[0]]
-    grid[cheat[1]][cheat[0]] = GROUND
 
     c = get_pos(START, grid)
     goal = get_pos(GOAL, grid)
@@ -66,9 +59,6 @@ def get_cost(grid, cheat=(-1, -1)):
                 prev[(nx, ny)] = (cx, cy)
                 heappush(q, (new_cost, (nx, ny)))
 
-    # This is cheaper than copying
-    grid[cheat[1]][cheat[0]] = old_tile
-
     path = set()
     cx, cy = goal
 
@@ -76,58 +66,55 @@ def get_cost(grid, cheat=(-1, -1)):
         path.add((cx, cy))
         cx, cy = prev.get((cx, cy), (-1, -1))
 
-    return path, costs[goal[1]][goal[0]]
+    return path, costs
 
 
-def get_manhattan(dist, grid):
-    width = len(grid[0])
-    height = len(grid)
+def get_manhattan(dist, pos, grid):
+    def in_bounds(x, y):
+        width = len(grid[0])
+        height = len(grid)
+        return 0 <= x < width and 0 <= y < height
 
-    for x in range(dist):
-        for y in range(dist, 0, -1):
-            print(x, y)
+    def add_row(dx, dy):
+        for i in range(-dx, dx + 1):
+            npx, npy = (px + i, py + dy) 
+            if in_bounds(npx, npy):
+                manhattan.add((npx, npy))
+
+    px, py = pos
+    manhattan = set()
+
+    for dy in range(-dist, 1):
+        add_row(dy + dist, dy)
+    for dy in range(dist, 0, -1):
+        add_row(dist - dy, dy)
+
+    return manhattan
 
 
+def get_shortcuts(grid, seconds):
+    path, costs = get_path(grid)
+    shortcuts = set()
 
+    for cx, cy in path:
+        for mx, my in get_manhattan(seconds, (cx, cy), grid):
+            old_cost = costs[cy][cx]
+            new_cost = costs[my][mx]
+            dist = (abs(cx - mx) + abs(cy - my))
 
-def get_cheats(path, grid):
-    width = len(grid[0])
-    height = len(grid)
-    cheats = set()
-    for px, py in path:
-        for nx, ny in neighbours(px, py, width, height):
-            if grid[ny][nx] == WALL:
-                cheats.add((nx, ny))
-    return cheats
-
-
-def print_grid(grid, path):
-    for y, row in enumerate(grid):
-        r = ""
-        for x, c in enumerate(row):
-            if (x, y) in path and c not in (START, GOAL):
-                r += '*'
-            else:
-                r += c
-        print(r)
+            if new_cost < old_cost - dist - 100 + 1:
+                shortcuts.add(((cx, cy), (mx, my)))
+        
+    return shortcuts
 
 
 def part1():
     grid = get_input()
-    path, cost = get_cost(grid)
-    cheats = get_cheats(path, grid)
-    s = 0
-
-    for i, c in enumerate(cheats):
-        print(i / len(cheats))
-        if (cost - get_cost(grid, c)[1]) >= 100:
-            s += 1
-    return s
-    # return sum((cost - get_cost(grid, c)[1]) >= 100 for c in cheats)
-
+    return len(get_shortcuts(grid, 2))
 
 def part2():
-    return 0
+    grid = get_input()
+    return len(get_shortcuts(grid, 20))
 
 
 if __name__ == "__main__":
